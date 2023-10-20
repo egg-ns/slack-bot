@@ -34,7 +34,6 @@ RUN python3 -m venv $VIRTUAL_ENV && \
     python -m pip install -U pip && \
     python -m pip install -r requirements.txt
 COPY app ./app
-COPY scripts ./scripts
 
 ENTRYPOINT [ "gunicorn" ]
 CMD ["-b", "0.0.0.0:9001", "app.main:app"]
