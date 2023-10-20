@@ -11,7 +11,6 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /home/admin/obs
 COPY Pipfile Pipfile.lock ./
-COPY scripts ./scripts
 RUN pip install pipenv && \
     pipenv requirements > requirements.txt
 
