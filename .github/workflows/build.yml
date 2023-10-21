@@ -96,7 +96,7 @@ jobs:
         run: |
           pwd &&
           ls &&
-          docker build -t my-docker-image:latest ./docker/Dockerfile
+          docker build -t my-docker-image:latest -f ./docker/Dockerfile .
         working-directory: .
 
       - name: Push Docker Image
