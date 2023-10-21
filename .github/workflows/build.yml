@@ -94,7 +94,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t my-docker-image:latest .
+          docker build -t my-docker-image:latest ./docker/Dockerfile
         working-directory: .
 
       - name: Push Docker Image
