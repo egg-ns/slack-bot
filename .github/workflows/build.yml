@@ -6,6 +6,7 @@ env:
 
 jobs:
   build:
+    name: Build and push
     runs-on: self-hosted
     steps:
       - name: checkout
@@ -20,6 +21,9 @@ jobs:
             ${{ github.ref }}-${{ github.sha }}
             ${{ github.ref }}
             refs/head/main
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1 # QEMUエミュレーションをセットアップ
 
       - name: Set up Docker Buildx
         id: buildx
@@ -48,3 +52,71 @@ jobs:
           tags: ${{ env.TAGS }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+
+  deploy:
+    name: Deploy
+    runs-on: self-hosted
+    steps:
+      - name: checkout
+        uses: actions/checkout@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ github.ref }}-${{ github.sha }}
+          restore-keys: |
+            ${{ github.ref }}-${{ github.sha }}
+            ${{ github.ref }}
+            refs/head/main
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1 # QEMUエミュレーションをセットアップ
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: create tag
+        run: |
+          SHA=${{ github.sha }}
+          TAG=${IMAGE}:$(TZ=UTC-9 date '+%Y%m')-${SHA:0:7}
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            LATEST=${IMAGE}:latest
+            echo "TAGS=$TAG,$LATEST" >> $GITHUB_ENV
+          else
+            echo "TAGS=$TAG" >> $GITHUB_ENV
+          fi
+          echo TAG $TAG
+
+      - name: Check Current Directory
+        run: pwd
+
+      - name: Build Docker Image
+        run: |
+          docker build -t my-docker-image:latest .
+        working-directory: .
+
+      - name: Push Docker Image
+        run: |
+          echo "::set-output name=image_name::my-docker-image"
+          echo "::set-output name=image_tag::latest"
+          docker push my-docker-image:latest
+        id: push-image
+
+      - name: Extract Docker Metadata
+        id: metadata
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ steps.build.outputs.image_name }}:${{ steps.Deploy.outputs.image_tag }}
+
+      - name: Print Metadata
+        run: |
+          echo "Docker Image Name: ${{ steps.metadata.outputs.image_name }}"
+          echo "Docker Image Description: ${{ steps.metadata.outputs.description }}"
+          echo "Docker Image Author: ${{ steps.metadata.outputs.author }}"
+          echo "Docker Image Labels: ${{ steps.metadata.outputs.labels }}"
+
+      - name: Deploy
+        run: |
+          docker compose up -d

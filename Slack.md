@@ -12,14 +12,14 @@
   "features": {
     "bot_user": {
       "display_name": "socket-test",
-      "always_online": false
+      "always_online": true
     },
     "shortcuts": [
       {
-        "name": "問い合わせ",
+        "name": "おらおらおら",
         "type": "global",
-        "callback_id": "socket-test-callback",
-        "description": "あああ"
+        "callback_id": "aaa socket-test",
+        "description": "bbb"
       }
     ]
   },
@@ -58,12 +58,12 @@ display_information:
 features:
   bot_user:
     display_name: socket-test
-    always_online: false
+    always_online: true
   shortcuts:
-    - name: 問い合わせ
+    - name: おらおらおら
       type: global
-      callback_id: socket-test-callback
-      description: あああ
+      callback_id: aaa socket-test
+      description: bbb
 oauth_config:
   scopes:
     user:
@@ -81,11 +81,11 @@ settings:
     bot_events:
       - app_mention
       - channel_created
-interactivity:
-  is_enabled: true
-org_deploy_enabled: false
-socket_mode_enabled: true
-token_rotation_enabled: false
+  interactivity:
+    is_enabled: true
+  org_deploy_enabled: false
+  socket_mode_enabled: true
+  token_rotation_enabled: false
 ```
 
 ## TOKEN

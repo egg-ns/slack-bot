@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  api:
+    image: jedai-api-server:latest
+    build:
+      context: ./api
+      dockerfile: docker/api.dockerfile
+    container_name: jedai-api-server
+    command: "--preload --log-level debug -b 0.0.0.0:9001 app.main:app"
+    env_file:
+      - api/.env
+    environment:
+      TZ: Asia/Tokyo
+      FLASK_DEBUG: "False"
+    ports:
+      - 3000:3000
+    networks:
+      - api
+        # - auth
