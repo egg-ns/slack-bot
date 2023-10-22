@@ -2,19 +2,27 @@ version: "3"
 
 services:
   api:
-    image: jedai-api-server:latest
+    image: slack-bot-socket-server:latest
     build:
-      context: ./api
-      dockerfile: docker/api.dockerfile
-    container_name: jedai-api-server
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: slack-bot-socket-server
+    # ? Dockerfileの方で指定しているから -b 9001 app.main:app は不要？
     command: "--preload --log-level debug -b 0.0.0.0:9001 app.main:app"
     env_file:
-      - api/.env
+      - .env
     environment:
       TZ: Asia/Tokyo
       FLASK_DEBUG: "False"
     ports:
       - 3000:3000
+      # ? 3000:9001の間違い？
     networks:
       - api
-        # - auth
+    secrets:
+      # /run/secrets/my_secret/credential.json
+      - my_secret
+
+secrets:
+  my_secret:
+    file: ~/.secrets/credential.json

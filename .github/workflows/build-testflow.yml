@@ -41,17 +41,34 @@ jobs:
           fi
           echo TAG $TAG
 
+      # Artifact Registry へ接続
+
       - name: Build and push
         id: docker_build
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           context: ./
           file: ./docker/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
-          push: false
+          push: false # Artifact Registryへ接続したらTrue
           tags: ${{ env.TAGS }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+
+      # self-hosted runner 自身へ images を追加する場合、run コマンドで docker build を叩けとのこと
+
+      # - name: Extract Docker Metadata
+      #   id: metadata
+      #   uses: docker/metadata-action@v3
+      #   with:
+      #     images: ${{ steps.build.outputs.image_name }}:${{ steps.Deploy.outputs.image_tag }}
+
+      # - name: Print Metadata
+      #   run: |
+      #     echo "Docker Image Name: ${{ steps.metadata.outputs.image_name }}"
+      #     echo "Docker Image Description: ${{ steps.metadata.outputs.description }}"
+      #     echo "Docker Image Author: ${{ steps.metadata.outputs.author }}"
+      #     echo "Docker Image Labels: ${{ steps.metadata.outputs.labels }}"
 
   deploy:
     name: Deploy
@@ -98,26 +115,6 @@ jobs:
           ls &&
           docker build -t my-docker-image:latest -f ./docker/Dockerfile .
         working-directory: .
-
-      - name: Push Docker Image
-        run: |
-          echo "::set-output name=image_name::my-docker-image"
-          echo "::set-output name=image_tag::latest"
-          docker push my-docker-image:latest
-        id: push-image
-
-      - name: Extract Docker Metadata
-        id: metadata
-        uses: docker/metadata-action@v3
-        with:
-          images: ${{ steps.build.outputs.image_name }}:${{ steps.Deploy.outputs.image_tag }}
-
-      - name: Print Metadata
-        run: |
-          echo "Docker Image Name: ${{ steps.metadata.outputs.image_name }}"
-          echo "Docker Image Description: ${{ steps.metadata.outputs.description }}"
-          echo "Docker Image Author: ${{ steps.metadata.outputs.author }}"
-          echo "Docker Image Labels: ${{ steps.metadata.outputs.labels }}"
 
       - name: Deploy
         run: |
