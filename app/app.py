@@ -10,13 +10,13 @@ from flask import Flask
 logging.basicConfig(level=logging.DEBUG)
 
 # app = App(token=os.environ["SLACK_BOT_TOKEN"])
-bot_token = "xoxb-811268029777-6071567405539-eqQejM44eAdC2LbIBapwdV69"
+bot_token = "xoxb-811268029777-6071567405539-vV5rrhbHVIwnj1L1nzMwsZVZ"
 app = App(token=bot_token)
 
 #
 # Socket Mode
 #
-app_token = "xapp-1-A062SF7EGAC-6069648164662-44a6307085f83d0eec811f841d46ed9015fddc6fa0bb7c629b675d4ba70a8e0a"
+app_token = "xapp-1-A062SF7EGAC-6099296799616-d3de204dbcd3115cafd8d7f01286d7cd5cb1e1e433f4822c6e0f9806d9cbaaa6"
 # handler = SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"])
 handler = SocketModeHandler(app, app_token)
 # Use connect() method as start() blocks the current thread
