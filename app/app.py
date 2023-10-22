@@ -2,6 +2,7 @@
 # Bolt App
 #
 import os
+import json
 import logging
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
@@ -9,16 +10,17 @@ from flask import Flask
 
 logging.basicConfig(level=logging.DEBUG)
 
+with open("credentials.json") as F:
+    credentials = json.load(F)
+
 # app = App(token=os.environ["SLACK_BOT_TOKEN"])
-bot_token = "xoxb-811268029777-6071567405539-vV5rrhbHVIwnj1L1nzMwsZVZ"
-app = App(token=bot_token)
+app = App(token=credentials["bot_token"])
 
 #
 # Socket Mode
 #
-app_token = "xapp-1-A062SF7EGAC-6099296799616-d3de204dbcd3115cafd8d7f01286d7cd5cb1e1e433f4822c6e0f9806d9cbaaa6"
 # handler = SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"])
-handler = SocketModeHandler(app, app_token)
+handler = SocketModeHandler(app, credentials["app_token"])
 # Use connect() method as start() blocks the current thread
 handler.connect()
 
