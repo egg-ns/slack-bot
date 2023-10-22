@@ -8,7 +8,8 @@ services:
       dockerfile: docker/Dockerfile
     container_name: slack-bot-socket-server
     # ? Dockerfileの方で指定しているから -b 9001 app.main:app は不要？
-    command: "--preload --log-level debug -b 0.0.0.0:9001 app.main:app"
+    # command: "--preload --log-level debug -b 0.0.0.0:9001 app.main:app"
+    command: "--preload --log-level debug -b 0.0.0.0:9001 --workers 1 --threads 2 --timeout 0 app.app:flask_app"
     env_file:
       - .env
     environment:

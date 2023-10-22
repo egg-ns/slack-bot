@@ -35,4 +35,4 @@ RUN python3 -m venv $VIRTUAL_ENV && \
 COPY app ./app
 
 ENTRYPOINT [ "gunicorn" ]
-CMD ["-b", "0.0.0.0:9001", "app.main:app"]
+# CMD ["--bind", "0.0.0.0:9001", "--workers", "1" , "--threads", "2", "app.app:flask_app"]
