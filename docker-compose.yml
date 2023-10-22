@@ -23,6 +23,11 @@ services:
       # /run/secrets/my_secret/credential.json
       - my_secret
 
+# local-buildの場合は、最初から置いておけばよいか
 secrets:
   my_secret:
-    file: ~/.secrets/credential.json
+    file: credential.json
+
+networks:
+  api:
+    driver: bridge

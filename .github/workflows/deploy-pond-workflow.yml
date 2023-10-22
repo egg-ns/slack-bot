@@ -1,4 +1,4 @@
-name: build-docker
+name: build-and-deploy-local
 # main ブランチへのPull Request と Merge をトリガーに指定
 on:
   push:
@@ -22,10 +22,16 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
+
+      - name: Save the sercret file
+        run: envsubst < credential.envsubst.json  > credential.json
+        env:
+          NAME: ${{ secrets.NAME }}
+          PASSWORD: ${{ secrets.VALUE }}
 
       - name: Cache Docker layers
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
           key: ${{ github.ref }}-${{ github.sha }}
@@ -35,11 +41,11 @@ jobs:
             refs/head/main
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1 # QEMUエミュレーションをセットアップ
+        uses: docker/setup-qemu-action@v2 # QEMUエミュレーションをセットアップ
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: create tag
         run: |
@@ -52,9 +58,6 @@ jobs:
             echo "TAGS=$TAG" >> $GITHUB_ENV
           fi
           echo TAG $TAG
-
-      - name: Check Current Directory
-        run: pwd
 
       # よく考えたら docker compose だけで buildまでしてくれるわ
       # - name: Build Docker Image
